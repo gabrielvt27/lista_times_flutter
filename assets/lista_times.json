@@ -1,0 +1,72 @@
+[
+    {
+        "id": 1,
+        "nome": "AD São Caetano",
+        "cidade": "São Caetano do Sul",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_sao_caetano.png"
+    },
+    {
+        "id": 2,
+        "nome": "São Bernardo FC",
+        "cidade": "São Bernardo do Campo",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_sao_bernardo.png"
+    },
+    {
+        "id": 3,
+        "nome": "Santo André EC",
+        "cidade": "Santo André",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_santo_andre.png"
+    },
+    {
+        "id": 4,
+        "nome": "Água Santa EC",
+        "cidade": "Diadema",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_agua_santa.png"
+    },
+    {
+        "id": 5,
+        "nome": "EC São Bernardo",
+        "cidade": "São Bernardo do Campo",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_ec_sao_bernardo.png"
+    },
+    {
+        "id": 6,
+        "nome": "Grêmio Mauaense",
+        "cidade": "Mauá",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_gremio_mauaense.png"
+    },
+    {
+        "id": 7,
+        "nome": "Mauá FC",
+        "cidade": "Mauá",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_maua_fc.png"
+    },
+    {
+        "id": 8,
+        "nome": "CA Juventus",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_juventus_ca.png"
+    },
+    {
+        "id": 9,
+        "nome": "Portuguesa",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_portuguesa.png"
+    },
+    {
+        "id": 10,
+        "nome": "Nacional AC",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "icone": "assets/escudos/icones/escudo_nacional_ac.png"
+    }
+]
