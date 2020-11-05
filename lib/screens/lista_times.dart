@@ -10,7 +10,7 @@ class ListaTimes extends StatefulWidget {
 
 class _ListaTimesState extends State<ListaTimes> {
 
-  List _listaTimes = ["São Caetano", "Mauá"];
+  List _listaTimes = ["São Caetano", "Mauá", "São Bernardo"];
 
   @override
   Widget build(BuildContext context) {
