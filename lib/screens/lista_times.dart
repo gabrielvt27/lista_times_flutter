@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 class ListaTimes extends StatefulWidget {
   final PageController controller;
@@ -15,8 +15,8 @@ class ListaTimes extends StatefulWidget {
 
 class _ListaTimesState extends State<ListaTimes> {
 
-  List _listaTimes = ["São Caetano"];
-/*
+  List _listaTimes = [];
+
   @override
   void initState() {
     super.initState();
@@ -26,7 +26,7 @@ class _ListaTimesState extends State<ListaTimes> {
         _listaTimes = json.decode(data);
       });
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,34 +38,39 @@ class _ListaTimesState extends State<ListaTimes> {
           backgroundColor: Colors.blue[900],
           actions: [
             IconButton(icon: Icon(Icons.add), onPressed: (){
-              controller.animateToPage(page, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+              controller.animateToPage(page, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
             })
           ],
           centerTitle: true,
         ),
-        body: 
-        Container(
-          padding: EdgeInsets.all(5.0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.blue[300],
-                Colors.blue[900],
-              ],
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft
-            )
-          ),
-          child: new ListView.builder(
-            itemCount: _listaTimes.length,
-            itemBuilder: (_, index){
-              return Card(
-                child:ListTile(
-                  title: Text(_listaTimes[index])
+        body: Stack(
+          children: [ 
+            Container(
+              padding: EdgeInsets.all(5.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.blue[300],
+                    Colors.blue[900],
+                  ],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft
                 )
-              );
-            }
-          ),
+              ),
+              child: new ListView.builder(
+                itemCount: _listaTimes.length,
+                itemBuilder: (_, index){
+                  return Card(
+                    child:ListTile(
+                      title: Text(_listaTimes[index]["nome"]),
+                      subtitle: Text(_listaTimes[index]["cidade"] + " - " + _listaTimes[index]["estado"]),
+                      trailing: IconButton(icon: Icon(Icons.more_vert), onPressed: (){}),
+                    )
+                  );
+                }
+              ),
+            ),
+          ]
         )
       );
   }
@@ -76,19 +81,10 @@ class _ListaTimesState extends State<ListaTimes> {
     return File("${directory.path}/lista_times.json");
   }
 
-  // Função para salvar os dados dos times no arquivo json
-  Future<File> _saveFile() async{
-    String data = json.encode(_listaTimes);
-
-    final file = await _getFile();
-
-    return file.writeAsString(data);
-  }
-
   Future<String> _readData() async{
     try{
-      final file = await _getFile();
-
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File("${directory.path}/lista_times.json");
       return file.readAsString();
     }catch(e){
       return null;

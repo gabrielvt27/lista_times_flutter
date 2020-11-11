@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CriaTime extends StatefulWidget {
   final PageController controller;
@@ -11,6 +15,11 @@ class CriaTime extends StatefulWidget {
 }
 
 class _CriaTimeState extends State<CriaTime> {
+  final _nometime    = TextEditingController();
+  final _estadotime  = TextEditingController();
+  final _cidadetime  = TextEditingController();
+
+  List _listaTimes    = [];
 
   final _formKey = GlobalKey<FormState>();
 
@@ -22,102 +31,121 @@ class _CriaTimeState extends State<CriaTime> {
         appBar: AppBar(
           title: Text("Criar um Time"),
           backgroundColor: Colors.blue[900],
-          actions: [
-            IconButton(icon: Icon(Icons.add), onPressed: (){
-              controller.animateToPage(page, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
-            })
-          ],
+          leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: (){
+            controller.animateToPage(page, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+          }),
           centerTitle: true,
         ),
-        body: Container(
-          padding: EdgeInsets.all(5.0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.blue[300],
-                Colors.blue[900],
-              ],
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft
-            )
-          ),
-          child: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Container(
-                decoration: BoxDecoration(color: Colors.grey[100],borderRadius: BorderRadius.circular(15),border: Border.all(width: 1,color: Colors.black)),
-                child: Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      TextFormField(
-                        decoration: InputDecoration(
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.black, width: 1.0),
+        body: Stack(
+          children: [
+            Container(
+              padding: EdgeInsets.all(5.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.blue[300],
+                    Colors.blue[900],
+                  ],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft
+                )
+              )
+            ),
+            GestureDetector(
+              onTap: (){
+                FocusScope.of(context).requestFocus(new FocusNode());
+              },
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.grey[100],borderRadius: BorderRadius.circular(15),border: Border.all(width: 1,color: Colors.black)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(30.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              construirInput("Nome do Time", _nometime),
+                              Divider(),
+                              construirInput("Estado", _estadotime),
+                              Divider(),
+                              construirInput("Cidade", _cidadetime),
+                              Divider(),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 40,
+                                child: RaisedButton(
+                                  color: Colors.blue[900],
+                                  child: Text("Salvar",style: TextStyle(color: Colors.white),),
+                                  onPressed: _addTime,
+                                ),
+                              )
+                            ],
                           ),
-                          border: OutlineInputBorder(),
-                          focusedBorder:OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue[900], width: 2.0),
-                          ),
-                          labelText: "Nome do Time",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 17)
                         ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
                       ),
-                      Divider(),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.black, width: 1.0),
-                          ),
-                          border: OutlineInputBorder(),
-                          focusedBorder:OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue[900], width: 2.0),
-                          ),
-                          labelText: "Estado",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 17)
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                      ),
-                      Divider(),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.black, width: 1.0),
-                          ),
-                          border: OutlineInputBorder(),
-                          focusedBorder:OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue[900], width: 2.0),
-                          ),
-                          labelText: "Cidade",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 17)
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          )
+            )
+          ],
         )
       );
+  }
+
+  Widget construirInput(String texto, TextEditingController controller){
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        enabledBorder: const OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black, width: 1.0),
+        ),
+        border: OutlineInputBorder(),
+        focusedBorder:OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue[900], width: 2.0),
+        ),
+        labelText: texto,
+        labelStyle: TextStyle(color: Colors.black,fontSize: 17)
+      ),
+      validator: (value) {
+        if (value.isEmpty) {
+          return 'Por favor insira ${texto}';
+        }
+        return null;
+      },
+    );
+  }
+
+  // Função para salvar os dados dos times no arquivo json
+  Future<File> _saveFile() async{
+    String data = json.encode(_listaTimes);
+
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File("${directory.path}/lista_times.json");
+
+    return file.writeAsString(data);
+  }
+
+  void _addTime(){
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        Map<String, dynamic> newTime = Map();
+        newTime["nome"] = _nometime.text;
+        newTime["estado"] = _estadotime.text;
+        newTime["cidade"] = _cidadetime.text;
+
+        _nometime.text = "";
+        _estadotime.text = "";
+        _cidadetime.text = "";
+
+        _listaTimes.add(newTime);
+        
+        _saveFile();
+      });
+    }
   }
 }

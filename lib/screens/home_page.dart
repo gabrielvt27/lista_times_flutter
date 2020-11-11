@@ -10,7 +10,6 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PageView(
       controller: _pagecontroller,
-      scrollDirection: Axis.vertical,
       physics: NeverScrollableScrollPhysics(),
       children: [
         ListaTimes(controller: _pagecontroller, page: 1),
