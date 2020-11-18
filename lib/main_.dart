@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lista_times/time.dart';
+import 'package:lista_times/classes/time.dart';
 
 void main() {
   runApp(ListaTimes());

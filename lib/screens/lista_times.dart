@@ -75,12 +75,6 @@ class _ListaTimesState extends State<ListaTimes> {
       );
   }
 
-  // Função para buscar o arquivo json com a lista de times
-  Future<File> _getFile() async{
-    final directory = await getApplicationDocumentsDirectory();
-    return File("${directory.path}/lista_times.json");
-  }
-
   Future<String> _readData() async{
     try{
       final directory = await getApplicationDocumentsDirectory();

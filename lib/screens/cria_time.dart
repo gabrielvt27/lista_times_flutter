@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 class CriaTime extends StatefulWidget {
@@ -15,11 +16,25 @@ class CriaTime extends StatefulWidget {
 }
 
 class _CriaTimeState extends State<CriaTime> {
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFromAsset().then((data) {
+      setState(() {
+        _estados = data;
+        print(_estados);
+      });
+    });
+  }
+
+
   final _nometime    = TextEditingController();
   final _estadotime  = TextEditingController();
   final _cidadetime  = TextEditingController();
 
   List _listaTimes    = [];
+  String _estados = "";
 
   final _formKey = GlobalKey<FormState>();
 
@@ -113,7 +128,7 @@ class _CriaTimeState extends State<CriaTime> {
       ),
       validator: (value) {
         if (value.isEmpty) {
-          return 'Por favor insira ${texto}';
+          return "Por favor insira ${texto}";
         }
         return null;
       },
@@ -147,5 +162,11 @@ class _CriaTimeState extends State<CriaTime> {
         _saveFile();
       });
     }
+  }
+
+  Future<String> _loadFromAsset() async { // ver https://stackoverflow.com/questions/52094031/dropdown-option-data-in-flutter-from-json-api
+    final resposta = await rootBundle.loadString("assets/data/estados.json");
+    //final parsed = jsonDecode(resposta);
+    return resposta;
   }
 }
