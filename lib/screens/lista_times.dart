@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
-import 'dart:io';
+import 'package:lista_times/model/time.dart';
 
 class ListaTimes extends StatefulWidget {
   final PageController controller;
   final int page;
+  final Equipes equipes;
 
-  const ListaTimes({Key key, this.controller, this.page}) : super(key:key);
+  const ListaTimes({Key key, this.controller, this.page, this.equipes}) : super(key:key);
 
   @override
   _ListaTimesState createState() => _ListaTimesState();
@@ -15,23 +14,13 @@ class ListaTimes extends StatefulWidget {
 
 class _ListaTimesState extends State<ListaTimes> {
 
-  List _listaTimes = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    _readData().then((data) {
-      setState(() {
-        _listaTimes = json.decode(data);
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final controller = widget.controller;
     final page = widget.page;
+    final equipes = widget.equipes;
+
     return Scaffold(
         appBar: AppBar(
           title: Text("Lista de Times"),
@@ -43,45 +32,33 @@ class _ListaTimesState extends State<ListaTimes> {
           ],
           centerTitle: true,
         ),
-        body: Stack(
-          children: [ 
-            Container(
-              padding: EdgeInsets.all(5.0),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.blue[300],
-                    Colors.blue[900],
-                  ],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft
-                )
-              ),
-              child: new ListView.builder(
-                itemCount: _listaTimes.length,
-                itemBuilder: (_, index){
+        body: FutureBuilder(
+          future: equipes.carregaEquipes(),
+          builder:(context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }else{
+              return Container(
+                child: ListView.builder(                                                  
+                itemCount: equipes.getEquipes.length,
+                itemBuilder: (BuildContext context, int index) {
                   return Card(
                     child:ListTile(
-                      title: Text(_listaTimes[index]["nome"]),
-                      subtitle: Text(_listaTimes[index]["cidade"] + " - " + _listaTimes[index]["estado"]),
+                      title: Text(equipes.getEquipes[index].nome),
+                      subtitle: Text(equipes.getEquipes[index].cidade + " - " + equipes.getEquipes[index].estado),
                       trailing: IconButton(icon: Icon(Icons.more_vert), onPressed: (){}),
+                      onLongPress: () =>{
+                        setState(() {
+                          equipes.deleteOne(index);
+                        })
+                      },
                     )
                   );
-                }
-              ),
-            ),
-          ]
-        )
+                })
+              );
+            }
+          }
+        ) 
       );
-  }
-
-  Future<String> _readData() async{
-    try{
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File("${directory.path}/lista_times.json");
-      return file.readAsString();
-    }catch(e){
-      return null;
-    }
   }
 }

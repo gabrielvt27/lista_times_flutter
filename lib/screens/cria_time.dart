@@ -1,15 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-
+import 'package:lista_times/model/time.dart';
 class CriaTime extends StatefulWidget {
   final PageController controller;
   final int page;
+  final Equipes equipes;
 
-  const CriaTime({Key key, this.controller, this.page}) : super(key:key);
+  const CriaTime({Key key, this.controller, this.page, this.equipes}) : super(key:key);
 
   @override
   _CriaTimeState createState() => _CriaTimeState();
@@ -17,31 +13,19 @@ class CriaTime extends StatefulWidget {
 
 class _CriaTimeState extends State<CriaTime> {
 
-  @override
-  void initState() {
-    super.initState();
-    _loadFromAsset().then((data) {
-      setState(() {
-        _estados = data;
-        print(_estados);
-      });
-    });
-  }
-
-
   final _nometime    = TextEditingController();
   final _estadotime  = TextEditingController();
   final _cidadetime  = TextEditingController();
-
-  List _listaTimes    = [];
-  String _estados = "";
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+
     final controller = widget.controller;
     final page = widget.page;
+    final equipes = widget.equipes;
+
     return Scaffold(
         appBar: AppBar(
           title: Text("Criar um Time"),
@@ -95,7 +79,7 @@ class _CriaTimeState extends State<CriaTime> {
                                 child: RaisedButton(
                                   color: Colors.blue[900],
                                   child: Text("Salvar",style: TextStyle(color: Colors.white),),
-                                  onPressed: _addTime,
+                                  onPressed: () => _addTime(equipes),
                                 ),
                               )
                             ],
@@ -135,38 +119,26 @@ class _CriaTimeState extends State<CriaTime> {
     );
   }
 
-  // Função para salvar os dados dos times no arquivo json
-  Future<File> _saveFile() async{
-    String data = json.encode(_listaTimes);
 
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File("${directory.path}/lista_times.json");
-
-    return file.writeAsString(data);
-  }
-
-  void _addTime(){
+  void _addTime(Equipes equipes){
     if (_formKey.currentState.validate()) {
       setState(() {
-        Map<String, dynamic> newTime = Map();
-        newTime["nome"] = _nometime.text;
-        newTime["estado"] = _estadotime.text;
-        newTime["cidade"] = _cidadetime.text;
+        
+        Time novoTime = Time(
+          id: equipes.getEquipes.length + 1,
+          nome:_nometime.text,
+          estado:_estadotime.text,
+          cidade:_cidadetime.text
+        );
+
+        equipes.addTime(novoTime);
 
         _nometime.text = "";
         _estadotime.text = "";
         _cidadetime.text = "";
-
-        _listaTimes.add(newTime);
         
-        _saveFile();
       });
     }
   }
 
-  Future<String> _loadFromAsset() async { // ver https://stackoverflow.com/questions/52094031/dropdown-option-data-in-flutter-from-json-api
-    final resposta = await rootBundle.loadString("assets/data/estados.json");
-    //final parsed = jsonDecode(resposta);
-    return resposta;
-  }
 }
