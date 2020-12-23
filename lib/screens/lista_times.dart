@@ -67,12 +67,14 @@ class _ListaTimesState extends State<ListaTimes> {
                                   child: const Text('Deletar'), value: {'button':'delete','indice':equipes.getEquipes[index].id}),
                             ],
                         onSelected: (value) => {
-                          if(value["button"] == 'edit')
-                            print(value["indice"])
-                          else
+                          if(value["button"] == 'edit'){
+                              equipes.alterid = value["indice"],
+                              controller.animateToPage(page, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut)
+                          }else{
                             setState(() {
                               equipes.deleteOne(value["indice"]);
                             })
+                          }
                         }),
                       )
                     );

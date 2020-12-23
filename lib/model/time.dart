@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 class Equipes{
   List<Time> _equipes = [];
   int _iterator = 1;
+  int _alterid = 0;
 
   Equipes(){
     carregaEquipes();
@@ -49,6 +50,11 @@ class Equipes{
     print("  + Time: ${time.nome} adicionado!!!");
   }
 
+  Time getTime(int indice){
+    List<Time> aux = _equipes.where((element) => element.id == indice).toList();
+    return aux[0];
+  }
+
   void deleteOne(int indice) async{
     List<Time> novaLista = _equipes.where((element) => element.id != indice).toList();
 
@@ -70,14 +76,24 @@ class Equipes{
   int get getIterator{
     return this._iterator;
   }
+
+  set alterid(int id){
+    this._alterid = id;
+  }
+
+  int get getAlterId{
+    int retorno = this._alterid;
+    this._alterid = 0;
+    return retorno;
+  }
 }
 
 class Time{
-  final int id;
-  final String nome;
-  final String cidade;
-  final String estado;
-  final String icone;
+  int id;
+  String nome;
+  String cidade;
+  String estado;
+  String icone;
 
   Time({this.id, this.nome, this.cidade, this.estado, this.icone});
 
@@ -98,4 +114,5 @@ class Time{
     "estado": estado,
     "icone": icone,
   };
+
 }

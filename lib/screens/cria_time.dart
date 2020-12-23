@@ -16,6 +16,13 @@ class CriaTime extends StatefulWidget {
 
 class _CriaTimeState extends State<CriaTime> {
   String _path;
+  String _titulo;
+  int _aux = 0;
+  int _page;
+  Equipes _equipes;
+  PageController _controller;
+  Time _time;
+
   final picker = ImagePicker();
 
   final _nometime    = TextEditingController();
@@ -27,16 +34,34 @@ class _CriaTimeState extends State<CriaTime> {
   @override
   Widget build(BuildContext context) {
 
-    final controller = widget.controller;
-    final page = widget.page;
-    final equipes = widget.equipes;
+    _controller = widget.controller;
+    _page = widget.page;
+    _equipes = widget.equipes;
 
+    _aux = _equipes.getAlterId;
+
+    if(_aux != 0){
+      _time = _equipes.getTime(_aux);
+      _nometime.text = _time.nome;
+      _estadotime.text = _time.estado;
+      _cidadetime.text = _time.cidade;
+      _path = _time.icone;
+
+      _titulo = "Editar Time";
+    }else{
+      _titulo = "Criar um Time";
+    }
+
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text("Criar um Time"),
+        title: Text(_titulo),
         backgroundColor: Colors.blue[900],
         leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: (){
-          controller.animateToPage(page, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+          setState(() {
+            _aux = 0;
+            _controller.animateToPage(_page, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+          });
         }),
         centerTitle: true,
       ),
@@ -107,7 +132,7 @@ class _CriaTimeState extends State<CriaTime> {
                         color: Colors.blue[900],
                         child: Text("Salvar",style: TextStyle(color: Colors.white),),
                         onPressed: () => {
-                          _addTime(equipes, context)
+                          _addTime(context)
                         }
                       ),
                     ),
@@ -145,36 +170,18 @@ class _CriaTimeState extends State<CriaTime> {
   }
 
 
-  void _addTime(Equipes equipes, BuildContext context){
+  void _addTime(BuildContext context){
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState.validate() && _path != null) {
-      setState(() {
-        
-        Time novoTime = Time(
-          id    : equipes.getIterator,
-          nome  : _nometime.text,
-          estado: _estadotime.text,
-          cidade: _cidadetime.text,
-          icone : _path
-        );
 
-        equipes.addTime(novoTime);
+      if(_aux != 0){
+        if(_nometime.text != _time.nome || _estadotime.text != _time.estado || _cidadetime.text != _time.cidade || _path != _time.icone){
+          showAlertDialog(context);
+        }
+      }else{
+        _criarTime(context);
+      }
 
-        _nometime.text = "";
-        _estadotime.text = "";
-        _cidadetime.text = "";
-        _path = null;
-        
-      });
-
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          action: SnackBarAction(
-              label: 'Fechar',
-              onPressed: (){}
-          ),
-          content: Text("Equipe salva com sucesso!"),
-        )
-      );
     }else if(_path == null && _formKey.currentState.validate()){
       Scaffold.of(context).showSnackBar(
         SnackBar(
@@ -186,7 +193,85 @@ class _CriaTimeState extends State<CriaTime> {
         )
       );
     }
-    
+  }
+
+  void _criarTime(BuildContext context){
+    setState(() {
+      Time novoTime = Time(
+        id    : _equipes.getIterator,
+        nome  : _nometime.text,
+        estado: _estadotime.text,
+        cidade: _cidadetime.text,
+        icone : _path
+      );
+
+      _equipes.addTime(novoTime);
+
+      _nometime.text = "";
+      _estadotime.text = "";
+      _cidadetime.text = "";
+      _path = null;
+      
+    });
+
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        action: SnackBarAction(
+            label: 'Fechar',
+            onPressed: (){}
+        ),
+        content: Text("Equipe salva com sucesso!"),
+      )
+    );
+  }
+
+  void _atualizarTime(BuildContext context){
+    _time.nome = _nometime.text;
+    _time.estado = _estadotime.text;
+    _time.cidade = _cidadetime.text;
+    _time.icone = _path;
+
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        action: SnackBarAction(
+            label: 'Fechar',
+            onPressed: (){}
+        ),
+        content: Text("Equipe salva com sucesso!"),
+      )
+    );
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed:  () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Continue"),
+      onPressed:  () {
+        Navigator.of(context).pop();
+        _atualizarTime(context);
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Deseja alterar esse cadastro?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   Future getImage() async {
