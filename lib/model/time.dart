@@ -10,6 +10,8 @@ class Equipes{
 
   Equipes(){
     carregaEquipes();
+
+    //_reset();
   }
 
   Future carregaEquipes() async{
@@ -35,6 +37,13 @@ class Equipes{
       return this._equipes;
     }
 
+  }
+
+  void _reset() async{
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File("${directory.path}/equipes.json");
+
+    file.writeAsString("[]");
   }
 
   void addTime(Time time) async{
@@ -82,9 +91,7 @@ class Equipes{
   }
 
   int get getAlterId{
-    int retorno = this._alterid;
-    this._alterid = 0;
-    return retorno;
+    return this._alterid;
   }
 }
 

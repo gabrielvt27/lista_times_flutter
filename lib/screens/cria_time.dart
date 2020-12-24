@@ -17,11 +17,12 @@ class CriaTime extends StatefulWidget {
 class _CriaTimeState extends State<CriaTime> {
   String _path;
   String _titulo;
-  int _aux = 0;
+  int _aux;
   int _page;
   Equipes _equipes;
   PageController _controller;
   Time _time;
+  bool _flag = false;
 
   final picker = ImagePicker();
 
@@ -45,7 +46,8 @@ class _CriaTimeState extends State<CriaTime> {
       _nometime.text = _time.nome;
       _estadotime.text = _time.estado;
       _cidadetime.text = _time.cidade;
-      _path = _time.icone;
+
+      if(!_flag) _path = _time.icone;
 
       _titulo = "Editar Time";
     }else{
@@ -58,10 +60,13 @@ class _CriaTimeState extends State<CriaTime> {
         title: Text(_titulo),
         backgroundColor: Colors.blue[900],
         leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: (){
-          setState(() {
-            _aux = 0;
+          if(_aux != 0){
+              _controller.animateToPage(_page, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+              _equipes.alterid = 0;
+          }else{
             _controller.animateToPage(_page, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-          });
+          }
+          FocusScope.of(context).unfocus();
         }),
         centerTitle: true,
       ),
@@ -82,12 +87,12 @@ class _CriaTimeState extends State<CriaTime> {
                       children: [
                         GestureDetector(
                           onTap: (){
-                            getImage();
+                            _getImage();
                           },
                           child: _path != null
                           ? Container(
-                            width: 180,
-                            height: 180,
+                            width: 190,
+                            height: 190,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
@@ -118,11 +123,11 @@ class _CriaTimeState extends State<CriaTime> {
                       ],
                     ),
                   ),
-                  construirInput("Nome do Time", _nometime),
+                  _construirInput("Nome do Time", _nometime),
                   Divider(),
-                  construirInput("Estado", _estadotime),
+                  _construirInput("Estado", _estadotime),
                   Divider(),
-                  construirInput("Cidade", _cidadetime),
+                  _construirInput("Cidade", _cidadetime),
                   Divider(),
                   GestureDetector(
                     child: SizedBox(
@@ -131,8 +136,8 @@ class _CriaTimeState extends State<CriaTime> {
                       child: RaisedButton(
                         color: Colors.blue[900],
                         child: Text("Salvar",style: TextStyle(color: Colors.white),),
-                        onPressed: () => {
-                          _addTime(context)
+                        onPressed: () {
+                          _addTime(context);
                         }
                       ),
                     ),
@@ -146,19 +151,16 @@ class _CriaTimeState extends State<CriaTime> {
     );
   }
 
-  Widget construirInput(String texto, TextEditingController controller){
+  Widget _construirInput(String texto, TextEditingController controller){
     return TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        enabledBorder: const OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-        ),
-        border: OutlineInputBorder(),
-        focusedBorder:OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue[900], width: 2.0),
+      style: TextStyle(fontSize: 24,color: Colors.black),
+      decoration: InputDecoration( 
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue[900],width: 2),
         ),
         labelText: texto,
-        labelStyle: TextStyle(color: Colors.black,fontSize: 17)
+        labelStyle: TextStyle(color: Colors.grey[600],fontSize: 17),
       ),
       validator: (value) {
         if (value.isEmpty) {
@@ -171,12 +173,12 @@ class _CriaTimeState extends State<CriaTime> {
 
 
   void _addTime(BuildContext context){
-    FocusScope.of(context).unfocus();
+    
     if (_formKey.currentState.validate() && _path != null) {
 
       if(_aux != 0){
         if(_nometime.text != _time.nome || _estadotime.text != _time.estado || _cidadetime.text != _time.cidade || _path != _time.icone){
-          showAlertDialog(context);
+          _showAlertDialog(context);
         }
       }else{
         _criarTime(context);
@@ -193,6 +195,8 @@ class _CriaTimeState extends State<CriaTime> {
         )
       );
     }
+
+    FocusScope.of(context).unfocus();
   }
 
   void _criarTime(BuildContext context){
@@ -206,13 +210,13 @@ class _CriaTimeState extends State<CriaTime> {
       );
 
       _equipes.addTime(novoTime);
-
-      _nometime.text = "";
-      _estadotime.text = "";
-      _cidadetime.text = "";
-      _path = null;
       
     });
+
+    _nometime.clear();
+    _estadotime.clear();
+    _cidadetime.clear();
+    _path = null;
 
     Scaffold.of(context).showSnackBar(
       SnackBar(
@@ -242,7 +246,7 @@ class _CriaTimeState extends State<CriaTime> {
     );
   }
 
-  showAlertDialog(BuildContext context) {
+  _showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
@@ -274,11 +278,12 @@ class _CriaTimeState extends State<CriaTime> {
     );
   }
 
-  Future getImage() async {
+  Future _getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     setState(() {
       if (pickedFile != null) {
         _path = pickedFile.path;
+        _flag = true;
       } else {
         print('No image selected.');
       }
