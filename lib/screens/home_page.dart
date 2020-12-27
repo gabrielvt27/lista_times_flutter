@@ -4,7 +4,6 @@ import 'package:lista_times/screens/cria_time.dart';
 import 'package:lista_times/screens/lista_times.dart';
 
 class HomePage extends StatelessWidget {
-
   final _pagecontroller = PageController();
   final _equipes = Equipes();
 

@@ -9,9 +9,8 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Lista de Times",
-      debugShowCheckedModeBanner: false,
-      home: HomePage()
-    );
+        title: "Lista de Times",
+        debugShowCheckedModeBanner: false,
+        home: HomePage());
   }
 }
