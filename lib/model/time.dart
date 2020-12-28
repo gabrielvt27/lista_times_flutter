@@ -101,16 +101,18 @@ class Equipes {
 class Time {
   int id;
   String nome;
+  String fullname;
   String cidade;
   String estado;
   String icone;
 
-  Time({this.id, this.nome, this.cidade, this.estado, this.icone});
+  Time({this.id, this.nome, this.fullname, this.cidade, this.estado, this.icone});
 
   factory Time.fromJson(Map<String, dynamic> json) {
     return Time(
       id: json["id"],
       nome: json["nome"],
+      fullname: json["fullname"],
       cidade: json["cidade"],
       estado: json["estado"],
       icone: json["icone"],
@@ -120,6 +122,7 @@ class Time {
   Map<String, dynamic> toJson() => {
         "id": id,
         "nome": nome,
+        "fullname": fullname,
         "cidade": cidade,
         "estado": estado,
         "icone": icone,

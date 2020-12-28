@@ -39,6 +39,7 @@ class _CriaTimeState extends State<CriaTime> {
   final picker = ImagePicker();
 
   final _nometime = TextEditingController();
+  final _fullnametime = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -60,16 +61,18 @@ class _CriaTimeState extends State<CriaTime> {
     if (_aux != 0) {
       _time = _equipes.getTime(_aux);
       _nometime.text = _time.nome;
-      _selectedEstado = _time.estado;
+      _fullnametime.text = _time.fullname;
 
-      List<Estado> idestado =
+      if (!_flag) {
+        List<Estado> idestado =
           _estados.where((estado) => estado.sigla == _time.estado).toList();
-      _cidades = _originalcidades
-          .where((cidade) => cidade.estado == idestado[0].id)
-          .toList();
-      _selectedCidade = _time.cidade;
-
-      if (!_flag) _path = _time.icone;
+          _cidades = _originalcidades
+              .where((cidade) => cidade.estado == idestado[0].id)
+              .toList();
+        _selectedCidade = _time.cidade;
+        _selectedEstado = _time.estado;
+        _path = _time.icone;
+      }
 
       _titulo = "Editar Time";
     } else {
@@ -141,6 +144,10 @@ class _CriaTimeState extends State<CriaTime> {
                   Divider(
                     color: Colors.transparent,
                   ),
+                  _construirInput("Nome Completo do Time", _fullnametime),
+                  Divider(
+                    color: Colors.transparent,
+                  ),
                   Container(
                     child: Row(
                       children: [
@@ -160,6 +167,7 @@ class _CriaTimeState extends State<CriaTime> {
                                     .toList();
 
                                 _selectedCidade = _cidades[0].nome;
+                                _flag = true;
                               });
                             },
                             underline: Container(
@@ -183,6 +191,7 @@ class _CriaTimeState extends State<CriaTime> {
                             onChanged: (String newValue) {
                               setState(() {
                                 _selectedCidade = newValue;
+                                _flag = true;
                               });
                             },
                             underline: Container(
@@ -251,6 +260,7 @@ class _CriaTimeState extends State<CriaTime> {
     if (_formKey.currentState.validate() && _path != null) {
       if (_aux != 0) {
         if (_nometime.text != _time.nome ||
+            _fullnametime.text != _time.fullname ||
             _selectedEstado != _time.estado ||
             _selectedCidade != _time.cidade ||
             _path != _time.icone) {
@@ -274,6 +284,7 @@ class _CriaTimeState extends State<CriaTime> {
       Time novoTime = Time(
           id: _equipes.getIterator,
           nome: _nometime.text,
+          fullname: _fullnametime.text,
           estado: _selectedEstado,
           cidade: _selectedCidade,
           icone: _path);
@@ -282,6 +293,7 @@ class _CriaTimeState extends State<CriaTime> {
     });
 
     _nometime.clear();
+    _fullnametime.clear();
     _path = null;
 
     Scaffold.of(context).showSnackBar(SnackBar(
@@ -292,6 +304,7 @@ class _CriaTimeState extends State<CriaTime> {
 
   void _atualizarTime(BuildContext context) {
     _time.nome = _nometime.text;
+    _time.fullname = _fullnametime.text;
     _time.estado = _selectedEstado;
     _time.cidade = _selectedCidade;
     _time.icone = _path;
@@ -401,7 +414,7 @@ class _CriaTimeState extends State<CriaTime> {
 
     List<Cidade> listacidades =
         itens.map<Cidade>((json) => Cidade.fromJson(json)).toList();
-    print("init state");
+
     setState(() {
       _originalcidades = listacidades;
       _cidades = _originalcidades

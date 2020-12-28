@@ -26,16 +26,13 @@ class _ListaTimesState extends State<ListaTimes> {
         appBar: AppBar(
           title: Text("Lista de Times"),
           backgroundColor: Colors.blue[900],
+          centerTitle: true,
           actions: [
             IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  controller.animateToPage(page,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut);
-                })
+                icon: Icon(Icons.search),
+                onPressed: () {}
+            )
           ],
-          centerTitle: true,
         ),
         body: FutureBuilder(
             future: equipes.carregaEquipes(),
@@ -106,6 +103,16 @@ class _ListaTimesState extends State<ListaTimes> {
               } else {
                 return Text("Ocorreu um erro inesperado");
               }
-            }));
+            }),
+            floatingActionButton: FloatingActionButton(
+              onPressed: (){
+                controller.animateToPage(page,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut);
+              },
+              child: Icon(Icons.add),
+              backgroundColor: Colors.blue[900]
+            ),
+      );
   }
 }
